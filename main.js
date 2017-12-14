@@ -1,6 +1,6 @@
 var GoogleAPI = (function () {
   var API_KEY = 'AIzaSyBzrCI1GVyEBLM6nZfgjoRmiJy4fQ0VqRQ';
-  var GOOGLE_URL = 'http://maps.googleapis.com/maps/api/geocode/';
+  var GOOGLE_URL = 'https://maps.googleapis.com/maps/api/geocode/';
 
   var getAddress = function (address) {
     return fetch(GOOGLE_URL + 'json?latlng=' + address.lat + ',' + address.long + '&sensor=true')
