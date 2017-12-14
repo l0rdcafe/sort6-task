@@ -1,5 +1,4 @@
 var GoogleAPI = (function () {
-  var API_KEY = 'AIzaSyBzrCI1GVyEBLM6nZfgjoRmiJy4fQ0VqRQ';
   var GOOGLE_URL = 'https://maps.googleapis.com/maps/api/geocode/';
 
   var getAddress = function (address) {
@@ -55,6 +54,7 @@ var model = (function () {
     places: places
   }
 })();
+
 var view = (function () {
   var render = function (addrString) {
     var div = document.getElementById('addresses');
@@ -71,15 +71,15 @@ var view = (function () {
 
 var handlers = (function () {
   var showAddresses = function () {
-    var sequence = Promise.resolve();
+    var seq = Promise.resolve();
 
     model.places.forEach(function (place) {
-      sequence = sequence.then(function () {
+      seq = seq.then(function () {
         return GoogleAPI.getAddress(place);
       })
       .then(view.render)
-      .catch(function (error) {
-        console.log(error);
+      .catch(function (err) {
+        view.render('Error: ' + err.message);
       });
     });
   };
