@@ -1,25 +1,19 @@
-var GoogleAPI = (function () {
-  var GOOGLE_URL = 'https://maps.googleapis.com/maps/api/geocode/';
+const GoogleAPI = (function() {
+  const GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/";
 
-  var getAddress = function (address) {
-    return fetch(GOOGLE_URL + 'json?latlng=' + address.lat + ',' + address.long + '&sensor=true')
-      .then(function (req) {
-        return req.json();
-      })
-      .then(function (json) {
-        return json.results[0].formatted_address;
-      })
-      .catch(function (err) {
-        return Promise.reject(err);
-      });
+  const getAddress = function(address) {
+    return fetch(`${GOOGLE_URL}json?latlng=${address.lat},${address.long}&sensor=true`)
+      .then(req => req.json())
+      .then(json => json.results[0].formatted_address)
+      .catch(err => Promise.reject(err));
   };
   return {
-    getAddress: getAddress
+    getAddress
   };
 })();
 
-var model = (function () {
-  var places = [
+const model = (function() {
+  const places = [
     {
       long: 31.2225712,
       lat: 30.0627897
@@ -29,7 +23,7 @@ var model = (function () {
       lat: 30.075882
     },
     {
-      long: 31.198710,
+      long: 31.19871,
       lat: 30.070682
     },
     {
@@ -51,42 +45,39 @@ var model = (function () {
   ];
 
   return {
-    places: places
-  }
+    places
+  };
 })();
 
-var view = (function () {
-  var render = function (addrString) {
-    var div = document.getElementById('addresses');
-    var p = document.createElement('p');
+const view = (function() {
+  const render = function(addrString) {
+    const div = document.getElementById("addresses");
+    const p = document.createElement("p");
     p.innerHTML = addrString;
 
     div.appendChild(p);
   };
 
   return {
-    render: render
+    render
   };
 })();
 
-var handlers = (function () {
-  var showAddresses = function () {
-    var seq = Promise.resolve();
-
-    model.places.forEach(function (place) {
-      seq = seq.then(function () {
-        return GoogleAPI.getAddress(place);
-      })
-      .then(view.render)
-      .catch(function (err) {
-        view.render('Error: ' + err.message);
-      });
-    });
+const handlers = (function() {
+  const showAddresses = async function() {
+    for (const place of model.places) {
+      try {
+        const addr = await GoogleAPI.getAddress(place);
+        view.render(addr);
+      } catch (e) {
+        view.render(`Error: ${e.message}`);
+      }
+    }
   };
 
   return {
-    showAddresses: showAddresses
+    showAddresses
   };
 })();
 
-document.addEventListener('DOMContentLoaded', handlers.showAddresses, false);
+document.addEventListener("DOMContentLoaded", handlers.showAddresses, false);
